@@ -26,6 +26,8 @@ esp32:
 #
 safe_mode:
 
+logger:
+  level: DEBUG
 # ---
 #
 # Over-the-Air Updates: https://esphome.io/components/ota/
@@ -66,6 +68,7 @@ web_server:
   include_internal: false
   version: 3
   log: true
+  ota: false
   # auth:
   #   username: !secret web_server_username
   #   password: !secret web_server_password
@@ -89,6 +92,7 @@ switch:
     name: "Trigger The Dog"
     icon: "mdi:fire"
     on_turn_on:
+    - logger.log: "This is fine!"
     - delay: 500ms
     - switch.turn_off: thedog_relay
 
