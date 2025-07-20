@@ -83,18 +83,20 @@ output:
     pin: GPIO8
     id: embeded_led
     inverted: true
-
-
-switch:
-  - platform: gpio
+  - platform: gpio  # Internal to the ESP
     pin: GPIO2
-    id: thedog_relay
+    id: thedog_switch
+
+button:
+  - platform: output # Shared with HA. 
     name: "Trigger The Dog"
+    output: thedog_switch
+    id: trigger_the_dog
+    duration: 500ms
     icon: "mdi:fire"
-    on_turn_on:
-    - logger.log: "This is fine!"
-    - delay: 500ms
-    - switch.turn_off: thedog_relay
+    on_press:
+      - logger.log: "This is fine!"
+
 
 # I tried using mDNS but it works "sometimes" and I don't know why. falling back to .lan domain
 mdns:
@@ -102,3 +104,10 @@ mdns:
     - service: "_the_dog_ui"
       protocol: "_tcp"
       port: 80
+
+# Example with more options
+api:
+  port: 6053
+  encryption:
+    key: !secret encryption_key
+  reboot_timeout: 0s

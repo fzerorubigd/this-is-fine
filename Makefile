@@ -29,4 +29,4 @@ logs:
 
 trigger:
 	@echo "Triggering the dog..."
-	curl -X POST http://finedog.lan/switch/trigger_the_dog/turn_on
+	curl -X POST http://finedog.lan/button/trigger_the_dog/press
