@@ -1,0 +1,100 @@
+#
+# ESPHome Core Configuration: https://esphome.io/components/esphome
+#
+esphome:
+  name: finedog
+  friendly_name: This is fine dog
+  # platformio_options: https://esphome.io/components/esphome#platformio-options
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.f_flash: 40000000L
+    board_build.flash_size: 4MB
+# ---
+#
+# ESP32 Platform: https://esphome.io/components/esp32
+#
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    # ESP-IDF framework: https://esphome.io/components/esp32#esp32-espidf-framework
+    # Arduino framework: https://esphome.io/components/esp32#arduino-framework
+    type: arduino
+    version: recommended
+# ---
+#
+# Safe Mode Component: https://esphome.io/components/safe_mode
+#
+safe_mode:
+
+# ---
+#
+# Over-the-Air Updates: https://esphome.io/components/ota/
+#
+ota:
+  # ESPHome OTA Updates: https://esphome.io/components/ota/esphome
+  # ESPHome’s Over-The-Air (OTA) platform allows you to remotely install modified/updated firmware binaries onto your ESPHome devices over their network (Wi-Fi or Ethernet) interface.
+  - platform: esphome
+    password: !secret ota_password
+# ---
+#
+# WiFi Component: https://esphome.io/components/wifi
+#
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: ".lan" # This is needed for linux resolving the domain. the dnsmasque sometimes mess .local domain
+  fast_connect: true
+  ap:
+    ap_timeout: 1min
+    ssid: "This is fine, AP"
+    password: !secret wifi_ap_password    
+  on_connect:
+    - output.turn_off: embeded_led
+  on_disconnect:
+    - output.turn_on: embeded_led    
+# ---
+#
+# Captive Portal: https://esphome.io/components/captive_portal
+#
+captive_portal:
+# ---
+#
+# Web Server Component: https://esphome.io/components/web_server
+#
+web_server:
+  port: 80
+  include_internal: false
+  version: 3
+  log: true
+  # auth:
+  #   username: !secret web_server_username
+  #   password: !secret web_server_password
+
+
+# ---
+#
+# Output Component: https://esphome.io/components/output/
+#
+output:
+  - platform: ledc
+    pin: GPIO8
+    id: embeded_led
+    inverted: true
+
+
+switch:
+  - platform: gpio
+    pin: GPIO2
+    id: thedog_relay
+    name: "Trigger The Dog"
+    icon: "mdi:fire"
+    on_turn_on:
+    - delay: 500ms
+    - switch.turn_off: thedog_relay
+
+# I tried using mDNS but it works "sometimes" and I don't know why. falling back to .lan domain
+mdns:
+  services:
+    - service: "_the_dog_ui"
+      protocol: "_tcp"
+      port: 80
