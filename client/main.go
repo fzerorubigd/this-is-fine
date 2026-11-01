@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	u := "http://finedog.lan/switch/trigger_the_dog/turn_on"
+	u := "http://finedog.lan/button/trigger_the_dog/press"
 	slog.Info("Triggering the dog", "url", u)
 	req, err := http.NewRequest(http.MethodPost, u, nil)
 	if err != nil {
